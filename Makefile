@@ -17,7 +17,7 @@ build:
 
 # Roda a aplicação localmente
 run:
-	./$(BINARY_NAME)
+	$(GO) run $(BINARY_NAME).$(GO) run
 
 # Compila e sobe os contêineres com o Docker Compose
 docker-up:
