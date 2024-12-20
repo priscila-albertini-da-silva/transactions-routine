@@ -2,31 +2,52 @@ package serverfx
 
 import (
 	"context"
-	"net"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"go.uber.org/fx"
 )
 
-func lifecycle(lc fx.Lifecycle) *http.Server {
-	srv := &http.Server{Addr: ":8080"}
-	lc.Append(fx.Hook{
+func NewRouter() *gin.Engine {
+	router := gin.Default()
+	router.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
+	router.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "Hello, World!",
+		})
+	})
+	return router
+}
+
+func StartServer(lifecycle fx.Lifecycle, router *gin.Engine) {
+	server := &http.Server{
+		Addr:    ":8080",
+		Handler: router,
+	}
+
+	lifecycle.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
-			ln, err := net.Listen("tcp", srv.Addr)
-			if err != nil {
-				return err
-			}
-			log.Info("Starting HTTP server at", srv.Addr)
-			go srv.Serve(ln)
+			go func() {
+				log.Info("Starting server on :8080")
+				if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+					log.Error("Server error: %s\n", err)
+				}
+			}()
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {
-			log.Info("Stopping Server")
-			return srv.Shutdown(ctx)
+			log.Info("Stopping Server...")
+			return server.Close()
 		},
 	})
-	return srv
 }
 
-var ModuleServer = fx.Module("server", fx.Invoke(lifecycle))
+var ModuleServer = fx.Options(
+	fx.Provide(NewRouter),
+	fx.Invoke(StartServer),
+)
