@@ -37,7 +37,12 @@ clean:
 
 # Testa a aplicação Go
 test:
-	$(GO) test ./...
+	$(GO) test github.com/priscila-albertini-da-silva/transactions-routine/.../ -v -count=1
+
+# Testa a aplicação Go com coverage
+coverage:
+	go test ./... -coverprofile=coverage.out
+	go tool cover -html=coverage.out -o coverage.html
 
 # Exibe ajuda com os comandos disponíveis
 help:
@@ -48,5 +53,5 @@ help:
 	@echo "  make docker-down    Para os contêineres"
 	@echo "  make docker-build   Build da imagem Docker"
 	@echo "  make test           Roda os testes da aplicação Go"
+	@echo "  make test-cover     Roda os testes da aplicação Go e mostra a sua cobertura"
 	@echo "  make clean          Remove arquivos compilados"
-
