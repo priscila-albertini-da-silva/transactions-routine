@@ -3,7 +3,7 @@ package validator_test
 import (
 	"testing"
 
-	"github.com/priscila-albertini-da-silva/transactions-routine/internal/entity"
+	"github.com/priscila-albertini-da-silva/transactions-routine/internal/core/entity"
 	"github.com/priscila-albertini-da-silva/transactions-routine/internal/errors"
 	"github.com/priscila-albertini-da-silva/transactions-routine/internal/validator"
 	"github.com/stretchr/testify/suite"

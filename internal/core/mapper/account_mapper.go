@@ -1,8 +1,8 @@
 package mapper
 
 import (
-	"github.com/priscila-albertini-da-silva/transactions-routine/internal/adapter/repository/model"
-	"github.com/priscila-albertini-da-silva/transactions-routine/internal/entity"
+	"github.com/priscila-albertini-da-silva/transactions-routine/internal/core/entity"
+	"github.com/priscila-albertini-da-silva/transactions-routine/internal/core/model"
 )
 
 func AccountToModel(account entity.Account) model.Account {
