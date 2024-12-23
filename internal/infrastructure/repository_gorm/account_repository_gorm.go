@@ -1,7 +1,8 @@
-package gorm
+package repository_gorm
 
 import (
 	"github.com/priscila-albertini-da-silva/transactions-routine/internal/core/model"
+	"github.com/priscila-albertini-da-silva/transactions-routine/internal/errors"
 	"github.com/priscila-albertini-da-silva/transactions-routine/internal/infrastructure/repository"
 	"github.com/priscila-albertini-da-silva/transactions-routine/pkg/gormfx"
 	"go.uber.org/fx"
@@ -26,6 +27,9 @@ func (r *AccountRepositoryGorm) Create(account *model.Account) (*model.Account, 
 func (r *AccountRepositoryGorm) FindByID(id uint64) (*model.Account, error) {
 	var account model.Account
 	if err := r.db.First(&account, id).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, errors.NewNotFoundError("Account not found")
+		}
 		return nil, err
 	}
 	return &account, nil

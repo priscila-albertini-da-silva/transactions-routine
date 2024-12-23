@@ -3,8 +3,9 @@ package validator
 import (
 	"regexp"
 
-	"github.com/priscila-albertini-da-silva/transactions-routine/internal/entity"
+	"github.com/priscila-albertini-da-silva/transactions-routine/internal/core/entity"
 	"github.com/priscila-albertini-da-silva/transactions-routine/internal/errors"
+	"go.uber.org/fx"
 )
 
 type AccountValidator struct{}
@@ -61,3 +62,5 @@ func calculateCPFCheckDigits(cpfPrefix string) (byte, byte) {
 
 	return byte(firstDigit + '0'), byte(secondDigit + '0')
 }
+
+var ModuleAccountValidator = fx.Module("account_validator", fx.Invoke(NewAccountValidator))

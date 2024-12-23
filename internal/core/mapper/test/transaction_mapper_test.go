@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/priscila-albertini-da-silva/transactions-routine/internal/adapter/repository/mapper"
-	"github.com/priscila-albertini-da-silva/transactions-routine/internal/adapter/repository/model"
-	"github.com/priscila-albertini-da-silva/transactions-routine/internal/entity"
+	"github.com/priscila-albertini-da-silva/transactions-routine/internal/core/entity"
+	"github.com/priscila-albertini-da-silva/transactions-routine/internal/core/mapper"
+	"github.com/priscila-albertini-da-silva/transactions-routine/internal/core/model"
 	"github.com/stretchr/testify/suite"
 )
 
