@@ -4,7 +4,7 @@ import (
 	"github.com/priscila-albertini-da-silva/transactions-routine/internal/core/entity"
 	"github.com/priscila-albertini-da-silva/transactions-routine/internal/core/mapper"
 	"github.com/priscila-albertini-da-silva/transactions-routine/internal/infrastructure/repository"
-	"github.com/priscila-albertini-da-silva/transactions-routine/internal/infrastructure/repository_gorm"
+	"github.com/priscila-albertini-da-silva/transactions-routine/internal/infrastructure/repositorygorm"
 	"github.com/priscila-albertini-da-silva/transactions-routine/internal/validator"
 	"go.uber.org/fx"
 )
@@ -53,6 +53,6 @@ func (uc *AccountUseCase) GetAccountByID(id uint64) (*entity.Account, error) {
 }
 
 var ModuleGenerateInvoiceExtractUseCase = fx.Options(
-	repository_gorm.ModuleAccountRepositoryGorm,
+	repositorygorm.ModuleAccountRepositoryGorm,
 	validator.ModuleAccountValidator,
 )

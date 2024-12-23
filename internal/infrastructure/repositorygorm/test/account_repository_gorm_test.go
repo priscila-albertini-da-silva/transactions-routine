@@ -1,4 +1,4 @@
-package repository_gorm_test
+package repositorygorm_test
 
 import (
 	"log"
@@ -8,7 +8,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/priscila-albertini-da-silva/transactions-routine/internal/core/model"
 	"github.com/priscila-albertini-da-silva/transactions-routine/internal/infrastructure/repository"
-	"github.com/priscila-albertini-da-silva/transactions-routine/internal/infrastructure/repository_gorm"
+	"github.com/priscila-albertini-da-silva/transactions-routine/internal/infrastructure/repositorygorm"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -43,7 +43,7 @@ func (suite *AccountRepositoryGormTestSuite) configureTestWithMock() {
 	})
 
 	suite.sqlmock = mock
-	suite.repo = repository_gorm.NewAccountRepository(suite.dbmock)
+	suite.repo = repositorygorm.NewAccountRepository(suite.dbmock)
 
 }
 

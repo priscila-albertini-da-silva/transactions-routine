@@ -1,4 +1,4 @@
-package repository_gorm
+package repositorygorm
 
 import (
 	"github.com/priscila-albertini-da-silva/transactions-routine/internal/core/model"
