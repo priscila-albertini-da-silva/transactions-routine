@@ -1,4 +1,4 @@
-package repository_gorm_test
+package repositorygorm_test
 
 import (
 	"log"
@@ -8,8 +8,8 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/priscila-albertini-da-silva/transactions-routine/internal/core/model"
 	"github.com/priscila-albertini-da-silva/transactions-routine/internal/infrastructure/repository"
-	"github.com/priscila-albertini-da-silva/transactions-routine/internal/infrastructure/repository_gorm"
-	"github.com/priscila-albertini-da-silva/transactions-routine/internal/infrastructure/repository_gorm/test/database"
+	"github.com/priscila-albertini-da-silva/transactions-routine/internal/infrastructure/repositorygorm"
+	"github.com/priscila-albertini-da-silva/transactions-routine/internal/infrastructure/repositorygorm/test/database"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -30,7 +30,7 @@ func (suite *TransactionRepositoryGormTestSuite) SetupTest() {
 	if err != nil {
 		log.Fatalf("failed to run migrations: %v", err)
 	}
-	suite.repo = repository_gorm.NewTransactionRepository(suite.db)
+	suite.repo = repositorygorm.NewTransactionRepository(suite.db)
 	suite.configureTestWithMock()
 }
 
@@ -50,7 +50,7 @@ func (suite *TransactionRepositoryGormTestSuite) configureTestWithMock() {
 	})
 
 	suite.sqlmock = mock
-	suite.repo = repository_gorm.NewTransactionRepository(suite.dbmock)
+	suite.repo = repositorygorm.NewTransactionRepository(suite.dbmock)
 
 	// Expect Begin
 	suite.sqlmock.ExpectBegin()
