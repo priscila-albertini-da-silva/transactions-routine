@@ -9,29 +9,32 @@ import (
 	"go.uber.org/fx"
 )
 
-type AccountUseCase struct {
-	accountRepo repository.AccountRepository
-	validator   *validator.AccountValidator
+type AccountUseCase interface {
+	CreateAccount(account entity.Account) (*entity.Account, error)
+	GetAccountByID(id uint64) (*entity.Account, error)
 }
 
-func NewAccountUseCase(accountRepo repository.AccountRepository, validator *validator.AccountValidator) *AccountUseCase {
-	return &AccountUseCase{
-		accountRepo: accountRepo,
-		validator:   validator,
+type AccountUseCaseImpl struct {
+	accountRepository repository.AccountRepository
+	validator         validator.AccountValidator
+}
+
+func NewAccountUseCase(accountRepo repository.AccountRepository, validator validator.AccountValidator) AccountUseCase {
+	return &AccountUseCaseImpl{
+		accountRepository: accountRepo,
+		validator:         validator,
 	}
 }
 
-func (uc *AccountUseCase) CreateAccount(documentNumber string) (*entity.Account, error) {
-	account := entity.NewAccount(documentNumber)
-
-	err := uc.validator.Validate(account)
+func (uc *AccountUseCaseImpl) CreateAccount(account entity.Account) (*entity.Account, error) {
+	err := uc.validator.Validate(&account)
 	if err != nil {
 		return nil, err
 	}
 
-	accountModel := mapper.AccountToModel(*account)
+	accountModel := mapper.AccountToModel(account)
 
-	savedAccountModel, err := uc.accountRepo.Create(&accountModel)
+	savedAccountModel, err := uc.accountRepository.Create(&accountModel)
 	if err != nil {
 		return nil, err
 	}
@@ -41,8 +44,8 @@ func (uc *AccountUseCase) CreateAccount(documentNumber string) (*entity.Account,
 	return &savedAccountEntity, nil
 }
 
-func (uc *AccountUseCase) GetAccountByID(id uint64) (*entity.Account, error) {
-	accountModel, err := uc.accountRepo.FindByID(id)
+func (uc *AccountUseCaseImpl) GetAccountByID(id uint64) (*entity.Account, error) {
+	accountModel, err := uc.accountRepository.FindByID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +55,8 @@ func (uc *AccountUseCase) GetAccountByID(id uint64) (*entity.Account, error) {
 	return &accountEntity, nil
 }
 
-var ModuleGenerateInvoiceExtractUseCase = fx.Options(
+var ModuleAccountUseCase = fx.Options(
 	repositorygorm.ModuleAccountRepositoryGorm,
 	validator.ModuleAccountValidator,
+	fx.Provide(NewAccountUseCase),
 )

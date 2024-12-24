@@ -8,20 +8,24 @@ import (
 	"go.uber.org/fx"
 )
 
-type AccountValidator struct{}
-
-func NewAccountValidator() *AccountValidator {
-	return &AccountValidator{}
+type AccountValidator interface {
+	Validate(account *entity.Account) error
 }
 
-func (v *AccountValidator) Validate(account *entity.Account) error {
+type AccountValidatorImpl struct{}
+
+func NewAccountValidator() AccountValidator {
+	return &AccountValidatorImpl{}
+}
+
+func (v *AccountValidatorImpl) Validate(account *entity.Account) error {
 	if !v.isValidCPF(account.DocumentNumber) {
 		return errors.NewValidationError("invalid CPF")
 	}
 	return nil
 }
 
-func (v *AccountValidator) isValidCPF(cpf string) bool {
+func (v *AccountValidatorImpl) isValidCPF(cpf string) bool {
 	cleanCPF := removeNonDigits(cpf)
 
 	if len(cleanCPF) != 11 {
@@ -38,25 +42,30 @@ func removeNonDigits(cpf string) string {
 
 func isCPFValid(cpf string) bool {
 	d1, d2 := calculateCPFCheckDigits(cpf[:9])
-	return cpf[9] == d1 && cpf[10] == d2
+	return byte(cpf[9]) == d1 && byte(cpf[10]) == d2
 }
 
 func calculateCPFCheckDigits(cpfPrefix string) (byte, byte) {
-	var sum int
+	// Primeiro dígito verificador
+	sum := 0
 	for i, c := range cpfPrefix {
 		sum += int(c-'0') * (10 - i)
 	}
-	firstDigit := (sum * 10) % 11
-	if firstDigit == 10 {
+	firstDigit := 11 - (sum % 11)
+	if firstDigit >= 10 {
 		firstDigit = 0
 	}
 
+	// Adiciona o primeiro dígito para o cálculo do segundo
+	cpfPrefix += string(firstDigit + '0')
+
+	// Segundo dígito verificador
 	sum = 0
 	for i, c := range cpfPrefix {
 		sum += int(c-'0') * (11 - i)
 	}
-	secondDigit := (sum * 10) % 11
-	if secondDigit == 10 {
+	secondDigit := 11 - (sum % 11)
+	if secondDigit >= 10 {
 		secondDigit = 0
 	}
 

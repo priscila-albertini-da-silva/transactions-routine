@@ -6,25 +6,33 @@ import (
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/fx"
 )
 
-func NewRouter() *gin.Engine {
-	router := gin.Default()
-	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	router.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "Hello, World!",
-		})
-	})
-	return router
+type Route struct {
+	Path    string
+	Method  string
+	Handler gin.HandlerFunc
 }
 
-func StartServer(lifecycle fx.Lifecycle, router *gin.Engine) {
+type params struct {
+	fx.In
+	Rt []Route
+}
+
+func StartServer(lifecycle fx.Lifecycle, p params) {
+	router := gin.Default()
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	api := router.Group("/")
+
+	for _, r := range p.Rt {
+		handlers := []gin.HandlerFunc{r.Handler}
+		api.Handle(r.Method, r.Path, handlers...)
+	}
+
 	server := &http.Server{
 		Addr:    ":8080",
 		Handler: router,
@@ -48,6 +56,5 @@ func StartServer(lifecycle fx.Lifecycle, router *gin.Engine) {
 }
 
 var ModuleServer = fx.Options(
-	fx.Provide(NewRouter),
 	fx.Invoke(StartServer),
 )
